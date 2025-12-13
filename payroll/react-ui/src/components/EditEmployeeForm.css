@@ -1,0 +1,40 @@
+.edit-form {
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.edit-form .card-header {
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  border-bottom: none;
+}
+
+.edit-form .form-label {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.edit-form .form-control,
+.edit-form .form-select {
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.edit-form .form-control:focus,
+.edit-form .form-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.edit-form .btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #000;
+}
+
+.edit-form .btn-warning:hover {
+  background-color: #ff9800;
+  border-color: #ff9800;
+}

@@ -1,0 +1,17 @@
+.employee-list h2 {
+  color: #333;
+  font-weight: 600;
+}
+
+.employee-list {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
