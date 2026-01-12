@@ -13,6 +13,8 @@ class Employee {
 
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     private String name;
+    private String username;
+    private String password;
     
     // Simple ManyToOne mapping (assumes Role has a primary key named 'id')
     @ManyToOne 
@@ -22,6 +24,13 @@ class Employee {
 
     Employee(String name, Role role) {
         this.name = name;
+        this.role = role;
+    }
+
+    Employee(String name, String username, String password, Role role) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
         this.role = role;
     }
 
@@ -49,6 +58,22 @@ class Employee {
         this.role = role;
     }
 
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Long getRoleId() {
         return this.role != null ? this.role.getId() : null;
     }
@@ -59,12 +84,12 @@ class Employee {
         if (!(o instanceof Employee)) return false;
         Employee employee = (Employee) o;
         return Objects.equals(this.id, employee.id) && Objects.equals(this.name, employee.name)
-            && Objects.equals(this.role, employee.role);
+            && Objects.equals(this.username, employee.username) && Objects.equals(this.role, employee.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.role);
+        return Objects.hash(this.id, this.name, this.username, this.role);
     }
 
     @Override

@@ -2,8 +2,14 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
-function Navbar() {
+function Navbar({ onLogout }) {
   const location = useLocation();
+
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      onLogout();
+    }
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -39,6 +45,16 @@ function Navbar() {
               >
                 🏷️ Roles
               </Link>
+            </li>
+          </ul>
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <button
+                className="btn btn-outline-light nav-link"
+                onClick={handleLogout}
+              >
+                🚪 Logout
+              </button>
             </li>
           </ul>
         </div>

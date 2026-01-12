@@ -26,8 +26,8 @@ class LoadDatabase {
             
             log.info("Preloaded Roles.");
 
-            log.info("Preloading " + employeeRepository.save(new Employee("Bilbo Baggins", developerRole)));
-            log.info("Preloading " + employeeRepository.save(new Employee("Frodo Baggins", testerRole)));
+            log.info("Preloading " + employeeRepository.save(new Employee("Bilbo Baggins", "bilbo", "password123", developerRole)));
+            log.info("Preloading " + employeeRepository.save(new Employee("Frodo Baggins", "frodo", "password123", testerRole)));
         };
     }
 }
