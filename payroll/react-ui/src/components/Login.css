@@ -1,22 +1,35 @@
 .login-container {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem 0;
+  padding: 2rem 1rem;
 }
 
 .login-form {
   border: none;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  background: white;
+  width: 100%;
+  max-width: 400px;
 }
 
 .login-form .card-header {
   background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   border-bottom: none;
-  padding: 2rem 1.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.login-form .card-header h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+.login-form .card-body {
+  padding: 2rem;
 }
 
 .login-form .form-label {
@@ -28,38 +41,57 @@
 .login-form .form-control {
   border-radius: 6px;
   border: 1px solid #ddd;
-  transition: border-color 0.3s, box-shadow 0.3s;
   padding: 0.75rem;
   font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .login-form .form-control:focus {
-  border-color: #80bdff;
+  border-color: #007bff;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .login-form .btn-primary {
   background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   border: none;
-  padding: 0.75rem;
+  padding: 0.75rem 1.5rem;
   font-size: 1.1rem;
   font-weight: 500;
+  border-radius: 6px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .login-form .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
   background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
 }
 
 .login-form .alert {
   border-radius: 6px;
   border: none;
+  font-weight: 500;
 }
 
-.login-form .form-text {
-  font-size: 0.875rem;
-  color: #6c757d;
-  margin-top: 0.25rem;
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .login-container {
+    padding: 1rem;
+  }
+
+  .login-form {
+    max-width: 100%;
+  }
+
+  .login-form .card-header {
+    padding: 1.5rem;
+  }
+
+  .login-form .card-header h4 {
+    font-size: 1.3rem;
+  }
+
+  .login-form .card-body {
+    padding: 1.5rem;
+  }
 }

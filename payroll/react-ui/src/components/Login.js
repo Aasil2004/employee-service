@@ -54,85 +54,78 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div className="login-container">
-      <div className="row justify-content-center">
-        <div className="col-md-6 col-lg-4">
-          <div className="card login-form shadow-sm">
-            <div className="card-header bg-primary text-white text-center">
-              <h4 className="mb-0">🔐 Login to Payroll System</h4>
+    <div className="login-container d-flex justify-content-center align-items-center min-vh-100">
+      <div className="card login-form shadow-lg">
+        <div className="card-header bg-primary text-white text-center py-4">
+          <h4 className="mb-0">🔐 Login to Payroll System</h4>
+        </div>
+        <div className="card-body p-4">
+          {error && (
+            <div className="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+              {error}
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setError('')}
+                aria-label="Close"
+              ></button>
             </div>
-            <div className="card-body">
-              {error && (
-                <div className="alert alert-danger alert-dismissible fade show" role="alert">
-                  {error}
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => setError('')}
-                  ></button>
-                </div>
-              )}
+          )}
 
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="username" className="form-label">
-                    Username <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="username"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    placeholder="Enter username"
-                    disabled={loading}
-                    autoComplete="username"
-                  />
-                  <small className="form-text text-muted">
-                    Sample users: bilbo, frodo
-                  </small>
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">
-                    Password <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Enter password"
-                    disabled={loading}
-                    autoComplete="current-password"
-                  />
-                  <small className="form-text text-muted">
-                    Default password: password123
-                  </small>
-                </div>
-
-                <div className="d-grid">
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-lg"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Logging in...
-                      </>
-                    ) : (
-                      'Login'
-                    )}
-                  </button>
-                </div>
-              </form>
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="mb-3">
+              <label htmlFor="username" className="form-label">
+                Username <span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Enter username"
+                disabled={loading}
+                autoComplete="username"
+                required
+              />
             </div>
-          </div>
+
+            <div className="mb-4">
+              <label htmlFor="password" className="form-label">
+                Password <span className="text-danger">*</span>
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Enter password"
+                disabled={loading}
+                autoComplete="current-password"
+                required
+              />
+            </div>
+
+            <div className="d-grid">
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
