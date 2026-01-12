@@ -1,62 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import EmployeeCard from './EmployeeCard';
-import EmployeeForm from './EmployeeForm';
-import './EmployeeList.css';
+import RoleCard from './RoleCard';
+import './RoleList.css';
 
-function EmployeeList() {
-  const [employees, setEmployees] = useState([]);
+function RoleList() {
+  const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    fetchEmployees();
+    fetchRoles();
   }, []);
 
-  const fetchEmployees = async () => {
+  const fetchRoles = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/employees');
-      setEmployees(response.data);
+      const response = await axios.get('/roles');
+      setRoles(response.data);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch employees. Make sure the backend is running on http://localhost:8080');
-      console.error('Error fetching employees:', err);
+      setError('Failed to fetch roles. Make sure the backend is running on http://localhost:8080');
+      console.error('Error fetching roles:', err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this employee?')) {
+    if (window.confirm('Are you sure you want to delete this role?')) {
       try {
-        await axios.delete(`/employees/${id}`);
-        setEmployees(employees.filter(emp => emp.id !== id));
+        await axios.delete(`/roles/${id}`);
+        setRoles(roles.filter(role => role.id !== id));
       } catch (err) {
-        setError('Failed to delete employee');
-        console.error('Error deleting employee:', err);
+        setError('Failed to delete role');
+        console.error('Error deleting role:', err);
       }
     }
   };
 
-  const handleUpdate = async (id, updatedEmployee) => {
+  const handleUpdate = async (id, updatedRole) => {
     try {
-      const response = await axios.put(`/employees/${id}`, updatedEmployee);
-      setEmployees(employees.map(emp => emp.id === id ? response.data : emp));
+      const response = await axios.put(`/roles/${id}`, updatedRole);
+      setRoles(roles.map(role => role.id === id ? response.data : role));
     } catch (err) {
-      setError('Failed to update employee');
-      console.error('Error updating employee:', err);
+      setError('Failed to update role');
+      console.error('Error updating role:', err);
     }
   };
 
-  const handleAddEmployee = () => {
+  const handleAddRole = () => {
     setShowForm(true);
   };
 
   const handleFormClose = () => {
     setShowForm(false);
-    fetchEmployees(); // Refresh the list after adding/editing
+    fetchRoles(); // Refresh the list after adding/editing
   };
 
   if (loading) {
@@ -65,20 +64,20 @@ function EmployeeList() {
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
-        <p className="mt-2">Loading employees...</p>
+        <p className="mt-2">Loading roles...</p>
       </div>
     );
   }
 
   return (
-    <div className="employee-list">
+    <div className="role-list">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>👥 Employee Management</h2>
+        <h2>🏷️ Role Management</h2>
         <button
           className="btn btn-success btn-lg"
-          onClick={handleAddEmployee}
+          onClick={handleAddRole}
         >
-          ➕ Add New Employee
+          ➕ Add New Role
         </button>
       </div>
 
@@ -96,24 +95,24 @@ function EmployeeList() {
       {showForm && (
         <div className="row mb-4">
           <div className="col-lg-6">
-            <EmployeeForm onClose={handleFormClose} />
+            <RoleForm onClose={handleFormClose} />
           </div>
         </div>
       )}
 
       <div className="row">
-        {employees.length === 0 ? (
+        {roles.length === 0 ? (
           <div className="col-12">
             <div className="alert alert-info text-center">
-              <h5>No employees found</h5>
-              <p>Get started by adding your first employee!</p>
+              <h5>No roles found</h5>
+              <p>Get started by adding your first role!</p>
             </div>
           </div>
         ) : (
-          employees.map(employee => (
-            <div key={employee.id} className="col-lg-4 col-md-6 mb-4">
-              <EmployeeCard
-                employee={employee}
+          roles.map(role => (
+            <div key={role.id} className="col-lg-4 col-md-6 mb-4">
+              <RoleCard
+                role={role}
                 onDelete={handleDelete}
                 onUpdate={handleUpdate}
               />
@@ -125,4 +124,4 @@ function EmployeeList() {
   );
 }
 
-export default EmployeeList;
+export default RoleList;

@@ -31,4 +31,24 @@ public class RoleController {
         return repository.findById(id)
             .orElseThrow(() -> new RoleNotFoundException(id));
     }
+
+    // PUT /roles/{id}
+    @PutMapping("/{id}")
+    Role replaceRole(@RequestBody Role newRole, @PathVariable Long id) {
+        return repository.findById(id)
+            .map(role -> {
+                role.setName(newRole.getName());
+                return repository.save(role);
+            })
+            .orElseGet(() -> {
+                newRole.setId(id);
+                return repository.save(newRole);
+            });
+    }
+
+    // DELETE /roles/{id}
+    @DeleteMapping("/{id}")
+    void deleteRole(@PathVariable Long id) {
+        repository.deleteById(id);
+    }
 }

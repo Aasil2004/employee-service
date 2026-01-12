@@ -1,0 +1,33 @@
+.role-form {
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.role-form .card-header {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border-bottom: none;
+}
+
+.role-form .form-label {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.role-form .form-control,
+.role-form .form-select {
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.role-form .form-control:focus,
+.role-form .form-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.role-form .text-danger {
+  color: #dc3545;
+}
