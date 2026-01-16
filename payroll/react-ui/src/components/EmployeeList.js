@@ -17,12 +17,44 @@ function EmployeeList() {
   const fetchEmployees = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/employees');
-      setEmployees(response.data);
       setError(null);
+      
+      const response = await axios.get('http://localhost:8080/employees');
+      
+      // Safely handle the response - ensure it's always an array
+      let data = response.data;
+      
+      // If response is wrapped in a structure, extract the array
+      if (data && typeof data === 'object') {
+        // If it's an array, use it directly
+        if (Array.isArray(data)) {
+          setEmployees(data);
+        } 
+        // If it's an object with an employees or results property, use that
+        else if (Array.isArray(data.employees)) {
+          setEmployees(data.employees);
+        } 
+        else if (Array.isArray(data.results)) {
+          setEmployees(data.results);
+        }
+        // If it's an object with data property that's an array
+        else if (Array.isArray(data.data)) {
+          setEmployees(data.data);
+        }
+        // Otherwise, initialize as empty array
+        else {
+          console.warn('Unexpected response format:', data);
+          setEmployees([]);
+        }
+      } else {
+        // If response is not an object, set empty array
+        setEmployees([]);
+      }
     } catch (err) {
       setError('Failed to fetch employees. Make sure the backend is running on http://localhost:8080');
       console.error('Error fetching employees:', err);
+      // Ensure employees is always an array even on error
+      setEmployees([]);
     } finally {
       setLoading(false);
     }
@@ -31,8 +63,13 @@ function EmployeeList() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
       try {
-        await axios.delete(`/employees/${id}`);
-        setEmployees(employees.filter(emp => emp.id !== id));
+        await axios.delete(`http://localhost:8080/employees/${id}`);
+        // Filter out the deleted employee from the state
+        setEmployees(prevEmployees => 
+          Array.isArray(prevEmployees) 
+            ? prevEmployees.filter(emp => emp.id !== id)
+            : []
+        );
       } catch (err) {
         setError('Failed to delete employee');
         console.error('Error deleting employee:', err);
@@ -42,8 +79,15 @@ function EmployeeList() {
 
   const handleUpdate = async (id, updatedEmployee) => {
     try {
-      const response = await axios.put(`/employees/${id}`, updatedEmployee);
-      setEmployees(employees.map(emp => emp.id === id ? response.data : emp));
+      const response = await axios.put(`http://localhost:8080/employees/${id}`, updatedEmployee);
+      const updatedData = response.data;
+      
+      // Safely update the employees array
+      setEmployees(prevEmployees => 
+        Array.isArray(prevEmployees)
+          ? prevEmployees.map(emp => emp.id === id ? updatedData : emp)
+          : []
+      );
     } catch (err) {
       setError('Failed to update employee');
       console.error('Error updating employee:', err);
@@ -102,7 +146,7 @@ function EmployeeList() {
       )}
 
       <div className="row">
-        {employees.length === 0 ? (
+        {!Array.isArray(employees) || employees.length === 0 ? (
           <div className="col-12">
             <div className="alert alert-info text-center">
               <h5>No employees found</h5>
