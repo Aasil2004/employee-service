@@ -32,6 +32,53 @@ public class LoginController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+        try {
+            // Validate username is not empty
+            if (registerRequest.getUsername() == null || registerRequest.getUsername().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new RegisterResponse(false, "Username cannot be empty", null));
+            }
+
+            // Check if username already exists (ensure uniqueness)
+            if (employeeRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new RegisterResponse(false, "Username already exists", null));
+            }
+
+            // Validate password is not empty
+            if (registerRequest.getPassword() == null || registerRequest.getPassword().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new RegisterResponse(false, "Password cannot be empty", null));
+            }
+
+            // Get role from repository
+            String roleName = registerRequest.getRole() != null ? registerRequest.getRole() : "USER";
+            Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RoleNotFoundException("Role not found: " + roleName));
+
+            // Create new employee with encrypted password
+            Employee newEmployee = new Employee();
+            newEmployee.setName(registerRequest.getName());
+            newEmployee.setUsername(registerRequest.getUsername());
+            newEmployee.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+            newEmployee.setRole(role);
+
+            // Save employee
+            Employee savedEmployee = employeeRepository.save(newEmployee);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new RegisterResponse(true, "Registration successful", savedEmployee));
+        } catch (RoleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new RegisterResponse(false, e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new RegisterResponse(false, "Registration failed: " + e.getMessage(), null));
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
