@@ -9,4 +9,8 @@ public class RoleNotFoundException extends RuntimeException {
     public RoleNotFoundException(Long id) {
         super("Could not find role " + id);
     }
+
+    public RoleNotFoundException(String message) {
+        super(message);
+    }
 }
