@@ -7,16 +7,29 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.payroll.security.EmployeeUserDetails;
+import com.example.payroll.role.Role;
+import com.example.payroll.role.RoleRepository;
+import com.example.payroll.role.RoleNotFoundException;
 
 @RestController
 @RequestMapping("/auth")
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
+    private final EmployeeRepository employeeRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public LoginController(AuthenticationManager authenticationManager) {
+    public LoginController(AuthenticationManager authenticationManager,
+                           EmployeeRepository employeeRepository,
+                           RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
+        this.employeeRepository = employeeRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
@@ -173,5 +186,91 @@ public class LoginController {
         
         public java.util.List<String> getAuthorities() { return authorities; }
         public void setAuthorities(java.util.List<String> authorities) { this.authorities = authorities; }
+    }
+
+    public static class RegisterRequest {
+        private String name;
+        private String username;
+        private String password;
+        private String role;
+
+        public RegisterRequest() {}
+
+        public RegisterRequest(String name, String username, String password, String role) {
+            this.name = name;
+            this.username = username;
+            this.password = password;
+            this.role = role;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+    }
+
+    public static class RegisterResponse {
+        private boolean success;
+        private String message;
+        private Employee employee;
+
+        public RegisterResponse() {}
+
+        public RegisterResponse(boolean success, String message, Employee employee) {
+            this.success = success;
+            this.message = message;
+            this.employee = employee;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public Employee getEmployee() {
+            return employee;
+        }
+
+        public void setEmployee(Employee employee) {
+            this.employee = employee;
+        }
     }
 }
