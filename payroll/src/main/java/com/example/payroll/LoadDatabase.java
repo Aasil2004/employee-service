@@ -19,10 +19,19 @@ class LoadDatabase {
         
         return args -> {
             
-            Role developerRole = roleRepository.save(new Role("developer")); 
-            Role testerRole = roleRepository.save(new Role("tester"));
-            Role adminRole = roleRepository.save(new Role("admin"));
-            roleRepository.save(new Role("manager"));
+            // Create roles only if they don't already exist
+            Role developerRole = roleRepository.findByName("developer")
+                .orElseGet(() -> roleRepository.save(new Role("developer")));
+            
+            Role testerRole = roleRepository.findByName("tester")
+                .orElseGet(() -> roleRepository.save(new Role("tester")));
+            
+            Role adminRole = roleRepository.findByName("admin")
+                .orElseGet(() -> roleRepository.save(new Role("admin")));
+            
+            if (roleRepository.findByName("manager").isEmpty()) {
+                roleRepository.save(new Role("manager"));
+            }
             
             log.info("Preloaded Roles.");
 
