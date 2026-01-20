@@ -9,8 +9,18 @@ function EmployeeList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    // Get user data from localStorage
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+    }
     fetchEmployees();
   }, []);
 
@@ -118,12 +128,14 @@ function EmployeeList() {
     <div className="employee-list">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>👥 Employee Management</h2>
-        <button
-          className="btn btn-success btn-lg"
-          onClick={handleAddEmployee}
-        >
-          ➕ Add New Employee
-        </button>
+        {user?.role?.name === 'admin' && (
+          <button
+            className="btn btn-success btn-lg"
+            onClick={handleAddEmployee}
+          >
+            ➕ Add New Employee
+          </button>
+        )}
       </div>
 
       {error && (
