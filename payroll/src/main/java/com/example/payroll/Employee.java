@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Employee {
@@ -16,6 +17,7 @@ public class Employee {
     private String name;
     @Column(unique = true, nullable = false)
     private String username;
+    @JsonIgnore
     private String password;
     
     // Simple ManyToOne mapping (assumes Role has a primary key named 'id')
