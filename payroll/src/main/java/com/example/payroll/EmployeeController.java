@@ -83,38 +83,38 @@ class EmployeeController {
         EmployeeUserDetails currentUser = (EmployeeUserDetails) authentication.getPrincipal();
         Employee loggedInEmployee = currentUser.getEmployee();
         
-        // Check if user is ADMIN or owns this record
+        // Check if user is ADMIN
         boolean isAdmin = authentication.getAuthorities().stream()
             .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
         
+        // Authorization check: non-admin users can only edit their own record
         if (!isAdmin && !loggedInEmployee.getId().equals(id)) {
             throw new AccessDeniedException("You can only edit your own employee record");
         }
         
-        Long roleId = newEmployee.getRole().getId();
-        Role role = roleRepository.findById(roleId)
-            .orElseThrow(() -> new RoleNotFoundException(roleId));
-            
-        newEmployee.setRole(role);
-        
-        // Hash password if provided
-        if (newEmployee.getPassword() != null && !newEmployee.getPassword().isEmpty()) {
-            newEmployee.setPassword(passwordEncoder.encode(newEmployee.getPassword()));
-        }
-
         return employeeRepository.findById(id)
             .map(employee -> {
+                // Update name (allowed for all authorized users)
                 employee.setName(newEmployee.getName());
-                employee.setRole(newEmployee.getRole());
-                if (newEmployee.getPassword() != null && !newEmployee.getPassword().isEmpty()) {
-                    employee.setPassword(newEmployee.getPassword());
+                
+                // Only allow role updates if user is ADMIN
+                // Non-admin users cannot change their own role
+                if (isAdmin && newEmployee.getRole() != null) {
+                    Long roleId = newEmployee.getRole().getId();
+                    Role role = roleRepository.findById(roleId)
+                        .orElseThrow(() -> new RoleNotFoundException(roleId));
+                    employee.setRole(role);
                 }
+                // If not admin, keep the existing role (ignore role from request body)
+                
+                // Update password if provided (encode before saving)
+                if (newEmployee.getPassword() != null && !newEmployee.getPassword().isEmpty()) {
+                    employee.setPassword(passwordEncoder.encode(newEmployee.getPassword()));
+                }
+                
                 return employeeRepository.save(employee);
             })
-            .orElseGet(() -> {
-                newEmployee.setId(id);
-                return employeeRepository.save(newEmployee);
-            });
+            .orElseThrow(() -> new EmployeeNotFoundException(id));
     }
 
     @DeleteMapping("/employees/{id}")
