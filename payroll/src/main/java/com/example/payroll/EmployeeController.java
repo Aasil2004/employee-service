@@ -32,7 +32,7 @@ class EmployeeController {
     }
 
     @GetMapping("/employees")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER', 'TESTER', 'MANAGER')")
     List<Employee> all() {
         return employeeRepository.findAll();
     }

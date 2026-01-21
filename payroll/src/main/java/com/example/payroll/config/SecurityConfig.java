@@ -62,6 +62,13 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .successHandler(authenticationSuccessHandler)
                 .permitAll()
+            )
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setContentType("application/json");
+                    response.setStatus(401);
+                    response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"Please sign in first\"}");
+                })
             );
         
         return http.build();
