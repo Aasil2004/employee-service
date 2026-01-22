@@ -1,6 +1,7 @@
 package com.example.payroll.config;
 
 import com.example.payroll.security.EmployeeUserDetailsService;
+import com.example.payroll.security.JwtAuthenticationFilter; // You need this filter
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -24,14 +26,14 @@ public class SecurityConfig {
 
     private final EmployeeUserDetailsService employeeUserDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter; // Added this
 
     public SecurityConfig(EmployeeUserDetailsService employeeUserDetailsService, 
                          PasswordEncoder passwordEncoder,
-                         CustomAuthenticationSuccessHandler authenticationSuccessHandler) {
+                         JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.employeeUserDetailsService = employeeUserDetailsService;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
@@ -50,18 +52,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Fixes "Failed to Fetch"
+            .csrf(csrf -> csrf.disable()) // Allows Postman/React POST requests
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No more HTML Login redirects
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/auth/login", "/auth/register").permitAll()
-                .requestMatchers("/employees/**").authenticated()
-                .requestMatchers("/dashboard/**").authenticated()
-                .anyRequest().permitAll()
-            )
-            .formLogin(form -> form
-                .successHandler(authenticationSuccessHandler)
-                .permitAll()
+                .requestMatchers("/auth/login", "/auth/register").permitAll() // Open access for registration/login
+                .requestMatchers("/employees/**").authenticated() // Francis must be logged in to see this
+                .anyRequest().authenticated()
             )
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> {
@@ -71,15 +68,19 @@ public class SecurityConfig {
                 })
             );
         
+        // Add the JWT filter before the standard authentication filter
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        
         return http.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173"));
+        // Allow your React frontend port 3000
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
